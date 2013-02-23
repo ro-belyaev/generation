@@ -1,3 +1,6 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="xslt_test.xslt"?>
+
 <tree>
     <nodes>
         <node id="all-tests" parent-id="-1">
