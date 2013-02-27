@@ -1,22 +1,32 @@
 $(function() {
+
+    $.ajax({
+        url : './choose_lang.php',
+        dataType : 'text'
+    })
+        .done(function(data) {
+            console.log(data);
+        });
+
+
+    var lang = 'ru';
+
     $.ajax({
         url : "./transform_xml.php",
+        data: {
+            "lang": lang
+        },
         dataType : "json"
     })
         .done(function(data) {
-//            console.log('begin');
             console.log(data);
             var xml = data['xml'];
             var tree = data['tree'];
-//            var dependenceBetweenClasses = data['dependence_between_classes'];
-//            var dependenceBetweenCriterions = data['dependence_between_criterions'];
-//            console.log(dependenceBetweenClasses);
-//            console.log(dependenceBetweenCriterions);
             $('#tests')
                 .on('loaded.jstree', function(event) {
                     $('[data-type="hidden"]')
                         .each(function() {
-                            console.log(this);
+//                            console.log(this);
                             $(this).hide();
                         });
 
@@ -32,10 +42,9 @@ $(function() {
                                     tests_ids.push(this.id);
                                 }
                             });
-                        console.log(tests_ids);
                         checkHiddenNodes(tests_ids, tree);
-//                        if(checkDependencesBetweenCriterions(tests_ids, tree) &&
-//                            checkDependencesBetweenClasses(tests_ids, tree)) {
+                        if(checkDependencesBetweenCriterions(tests_ids, tree) &&
+                            checkDependencesBetweenClasses(tests_ids, tree)) {
                             $.ajax({
                                 type: "POST",
                                 url: "start_generation.php",
@@ -49,7 +58,7 @@ $(function() {
                                 .fail(function () {
                                     alert("При запуске генерации тестового набора произошла ошибка.");
                                 });
-//                        }
+                        }
                     });
                 })
                 .jstree({
@@ -57,7 +66,8 @@ $(function() {
                         "data" : xml,
                         "xsl" : "nest"
                     },
-                    "plugins" : ["themes", "xml_data", "ui", "checkbox"]
+//                    "languages" : ["en", "ru"],
+                    "plugins" : ["themes", "xml_data", "ui", "languages", "checkbox"]
                 });
         })
         .fail(function() {

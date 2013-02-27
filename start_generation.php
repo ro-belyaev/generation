@@ -5,6 +5,10 @@ $nodes_from_client = $_POST['tests'];
 $xml_string = file_get_contents('./all_nodes.xml');
 $xml = new SimpleXMLElement($xml_string);
 
+if(count($nodes_from_client) == 0) {
+    die('no nodes from client');
+}
+
 if(!general_check($nodes_from_client, $xml)) {
     die('criterions ID or values were modified');
 }

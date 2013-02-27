@@ -49,7 +49,7 @@ function criterions_dependence_check($nodes, $xml) {
 		}
 	    }
 	    if(!$check) {
-		//echo "no each\n";
+		echo "no each\n";
 		return false;
 	    }
 	}
@@ -62,7 +62,7 @@ function criterions_dependence_check($nodes, $xml) {
 		}
 	    }
 	    if(!$check) {
-		//echo "no at-least-one\n";
+		echo "no at-least-one\n";
 		return false;
 	    }
 	}
@@ -82,7 +82,7 @@ function classes_dependence_check($nodes, $xml) {
 		    $id = (string) $sibling->attributes()->id;
 		    $already_seen[] = $id;
 		    if(!in_array($id, $nodes)) {
-			//echo "no $id\n";
+			echo "no $id\n";
 			return false;
 		    }
 		}

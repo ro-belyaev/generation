@@ -3,7 +3,7 @@
 function checkDependencesBetweenCriterions(checkedNodes, xmlString) {
     var parser = new DOMParser();
     var xml = parser.parseFromString(xmlString, "text/xml");
-    var allDependences = xml.evaluate("dependences-between-criterions/dependence", xml.documentElement, null,
+    var allDependences = xml.evaluate("//dependences-between-criterions/dependence", xml.documentElement, null,
         XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
     if(allDependences !== null) {
         var dependence = allDependences.iterateNext();
@@ -19,8 +19,8 @@ function checkDependencesBetweenCriterions(checkedNodes, xmlString) {
                     while(criterion) {
                         var criterionID = xml.evaluate("@id", criterion, null, XPathResult.STRING_TYPE, null)
                             .stringValue;
+                        var pattern = new RegExp(criterionID);
                         for(var nodeID in checkedNodes) {
-                            var pattern = new RegExp(criterionID);
                             if(checkedNodes[nodeID].search(pattern) != -1) {
                                 isOK = true;
                             }
@@ -74,7 +74,7 @@ function checkDependencesBetweenClasses(checkedNodes, xmlString) {
         var nodeID = checkedNodes[node].split('_')[0];
         if(alreadySeen.indexOf(nodeID) == -1) {
             alreadySeen.push(nodeID);
-            var criterion = xml.evaluate("dependences-between-classes/dependence/dependent-criterion[@id='" + nodeID + "']",
+            var criterion = xml.evaluate("//dependences-between-classes/dependence/dependent-criterion[@id='" + nodeID + "']",
                 xml.documentElement, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
             if(criterion != null) {
                 var criterionSiblings = xml.evaluate('following-sibling::* | preceding-sibling::*', criterion, null,
@@ -102,6 +102,77 @@ function checkDependencesBetweenClasses(checkedNodes, xmlString) {
         }
     }
     return true;
+}
+
+
+function unCheckHiddenNodes(xmlString) {
+    var parser = new DOMParser();
+    var xml = parser.parseFromString(xmlString, "text/xml");
+
+    //uncheck all hidden nodes
+    var xpathString = "//criterions/criterion[@type='hidden']";
+    var criterions = xml.evaluate(xpathString, xml.documentElement, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+    var criterion = criterions.iterateNext();
+    while(criterion) {
+        var criterionId = xml.evaluate("@id", criterion, null, XPathResult.STRING_TYPE, null).stringValue;
+        var classes = xml.evaluate("condition", criterion, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+        var oneClass = classes.iterateNext();
+        while(oneClass) {
+            var classValue = xml.evaluate("@value", oneClass, null, XPathResult.STRING_TYPE, null).stringValue;
+            var hiddenNodeID = criterionId + '_' + classValue;
+            var li = $('li#' + hiddenNodeID);
+            $('#tests')
+                .jstree('uncheck_node', li);
+            oneClass = classes.iterateNext();
+        }
+        criterion = criterions.iterateNext();
+    }
+}
+
+function checkHiddenNodes(checkedNodes, xmlString) {
+    var parser = new DOMParser();
+    var xml = parser.parseFromString(xmlString, "text/xml");
+
+    //check all hidden nodes that should be passed to the server
+    var xpathString = "//dependences-between-classes/dependence/" +
+        "dependent-criterion[@id=//criterions/criterion[@type='hidden']/@id]";
+    var criterions = xml.evaluate(xpathString, xml.documentElement, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+    var criterion = criterions.iterateNext();
+    while(criterion) {
+        var criterionIsChecked = false;
+        var criterionID = xml.evaluate("@id", criterion, null, XPathResult.STRING_TYPE, null).stringValue;
+        var getSiblingsXPathString = "following-sibling::* | preceding-sibling::*";
+        var siblings = xml.evaluate(getSiblingsXPathString, criterion, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+        var sibling = siblings.iterateNext();
+        while(sibling && !criterionIsChecked) {
+            var siblingID = xml.evaluate("@id", sibling, null, XPathResult.STRING_TYPE, null).stringValue;
+            var pattern = new RegExp('^' + siblingID + '_.+');
+            for(var node in checkedNodes) {
+                if(!criterionIsChecked) {
+                    if(pattern.test(checkedNodes[node])) {
+                        criterionIsChecked = true;
+                    }
+                }
+            }
+            sibling = siblings.iterateNext();
+        }
+        if(criterionIsChecked) {
+            var shouldBeCheckedNodesXPathString = "//criterions/criterion[@id='" + criterionID + "']/condition";
+            var shouldBeCheckedNodes = xml.evaluate(shouldBeCheckedNodesXPathString, xml.documentElement, null,
+                XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+            var shouldBeCheckedNode = shouldBeCheckedNodes.iterateNext();
+            while(shouldBeCheckedNode) {
+                var classValue = xml.evaluate("@value", shouldBeCheckedNode, null,
+                    XPathResult.STRING_TYPE, null).stringValue;
+                var shouldBeCheckedNodeID = criterionID + '_' + classValue;
+                $('#tests')
+                    .jstree('check_node', $('#tests #' + shouldBeCheckedNodeID));
+                checkedNodes.push(shouldBeCheckedNodeID);
+                shouldBeCheckedNode = shouldBeCheckedNodes.iterateNext();
+            }
+        }
+        criterion = criterions.iterateNext();
+    }
 }
 
 //-->
