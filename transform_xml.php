@@ -1,16 +1,18 @@
 <?php
 
-include_once('./choose_lang.php');
+require_once('./choose_lang.php');
 
-//$lang = $_GET['lang'];
-$lang = 'ru';
+$language = 'en';
+$cookie_name = 'sqli_benchmark_lang';
 
-if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-    $string = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-    $possible_lang = choose_language_by_accept_lang($string);
-    if($possible_lang != null) {
-	$lang = $possible_lang;
+if(isset($_COOKIE[$cookie_name])) {
+    $language = $_COOKIE[$cookie_name];
+}
+else {
+    if(($accept_lang = choose_language_by_accept_lang()) != null) {
+	$language = $accept_lang;
     }
+    setcookie($cookie_name, $language);
 }
 
 
@@ -24,7 +26,7 @@ $xsl->load('xslt_test.xslt');
 
 $proc = new XSLTProcessor();
 $proc->importStyleSheet($xsl);
-$proc->setParameter('', 'lang', $lang);
+$proc->setParameter('', 'lang', $language);
 
 
 $json_data = array();

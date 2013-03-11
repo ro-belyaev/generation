@@ -1,5 +1,8 @@
 <?php
 
+apache_setenv('no-gzip', 1);
+ini_set('zlib.output_compression', 0);
+
 include_once('check_dependences.php');
 $nodes_from_client = $_POST['tests'];
 $xml_string = file_get_contents('./all_nodes.xml');
@@ -40,8 +43,36 @@ foreach($nodes_from_client as $node) {
     }
 }
 include_once('sets_new.php');
+$num_of_tests = count($confs) * count($filters) * count($processes) * count($outputs) * count($templates);
+$process = 0;
+define('STATE_PROGRESS', 0);
+define('STATE_COMPLETE', 1);
+define('STATE_CANCEL', 2);
 
-if(!($handle = fopen('./tmpFile.txt', 'w'))) {
+$host = "127.0.0.1";
+$login = "root";
+$passw = "12345";
+$db = "sqli_benchmark";
+$table = "generation";
+$query = "INSERT INTO $table (`num_of_tests`, `process`, `state`)".
+	" VALUES($num_of_tests, $process, ". STATE_PROGRESS  .")";
+$connection = mysql_connect($host, $login, $passw);
+mysql_select_db($db, $connection);
+mysql_query($query, $connection);
+$id = mysql_insert_id($connection);
+
+ob_end_clean();
+header("Connection: close");
+ob_start();
+//$response_array = array('generation_id' => $id);
+echo $id;
+header("Content-Length: ". strlen((string)$id));
+//header("Location: http://localhost/generation/generation.html?id=$id");
+ob_end_flush();
+flush();
+include_once('master_new.php');
+
+/*if(!($handle = fopen('./tmpFile.txt', 'w'))) {
     die("Can't create file");
 }
 
@@ -57,4 +88,4 @@ foreach($templates as $template) {fwrite($handle, $template);fwrite($handle, "\n
 
 
 fclose($handle);
-
+*/

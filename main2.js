@@ -51,8 +51,13 @@ $(function() {
                                 data: {
                                     tests: tests_ids
                                 },
-                                success: function(data) {
-                                    console.log(data);
+                                success: function(generationID) {
+                                    console.log(generationID);
+                                    console.log('hello');
+                                    var generationWindow = "http://localhost/generation/generation.html?id=" +
+                                        generationID;
+                                    var target = "generationWindow";
+                                    window.open(generationWindow, "_top", "", true);
                                 }
                             })
                                 .fail(function () {
