@@ -9,6 +9,23 @@ $(function() {
         var tmpArr = getParamsArr[i].split("=");
         params[tmpArr[0]] = tmpArr[1];
     }
+
+    var generationWasCanceled = false;
+
+    $('#cancel').on('click', function() {
+        $.ajax({
+            type: "GET",
+            url: "./generation_cancel",
+            data: {
+                "id": params['id']
+            }
+        })
+            .done(function() {
+                generationWasCanceled = true;
+                window.open('./main.php', '_top', '', true);
+            });
+    });
+
     var intervalID = setInterval(function() {
         console.log('before ajax');
         $.ajax({
@@ -24,7 +41,7 @@ $(function() {
                 console.log('process...');
                 var progressBar = progress['progress'];
                 $('#progress-bar').width(progressBar + '%');
-                if(progressBar == 100) {
+                if(generationWasCanceled || progressBar == 100) {
                     clearInterval(intervalID);
                 }
             });

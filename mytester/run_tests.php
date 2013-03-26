@@ -12,6 +12,15 @@ if (isset($argv[1])) {
     $resd = null;
 }
 
+/*$host = "127.0.0.1";
+$login = "root";
+$passw = "12345";
+$db = "sqli_benchmark";
+$table = "generation";
+$connection = mysql_connect($host, $login, $passw);
+mysql_select_db($db, $connection);
+*/
+
 //$scanners = array(new ZeroScanner(), new Scanner_sqlmap());
 
 //$scanners = array(new Scanner_skipfish());
@@ -20,12 +29,12 @@ $scanners = array(
                   new ZeroScanner(),
                   //new Scanner_arachni_0_3(),
                   //new Scanner_sqlmap_0_9(),
-                  //new Scanner_sqlmap_r4365(),                                                                              
+                  //new Scanner_sqlmap_r4366(),                                                                              
                   //new Scanner_sqlmap_r4365(true),                                                                          
-                  //new Scanner_wapiti_2_2_1(),
+                  new Scanner_wapiti_2_2_1(),
                   //new Scanner_skipfish_1_81b(),                                                                            
                   //new Scanner_skipfish_2_03b(),
-                  new Scanner_skipfish_2_06b(),
+                  //new Scanner_skipfish_2_06b(),
                   //new Scanner_w3af_1_0_rc5(),                                                                              
                   //new Scanner_w3af_1_0_stable(),                                                                           
                   //new Scanner_w3af_1_1(),
@@ -41,7 +50,7 @@ $testpages =
     array_merge(
                 // mytests($index, $prefix) - загружает тесты из данного файла, 
                 // в вебе они должны быть доступны с данного пути
-                mytests("../mytests/tests/index.txt", "http://localhost:8070/tests/")
+                mytests("../mytests/tests/index.txt", "http://localhost/generation/mytests/tests/")
 
                 // realtests загружает реальные тесты из файла (просто список url)
                 //                realtests("real.txt")

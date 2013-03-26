@@ -10,7 +10,9 @@ $db_pass = "12345";
 $db_login_nosleep = "root"; //???
 $db_pass_nosleep = "12345";
 
-$db_db = "test";
+//$db_db = "test";
+$db_db = "sqli_benchmark";
+//$db_pref = "mytests_";
 $db_pref = "mytests_";
 
 ?>

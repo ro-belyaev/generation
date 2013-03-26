@@ -35,8 +35,17 @@ class Test {
         $this->process = $process;
         $this->output = $output;
         $this->template = $template;
-        $this->logfile = $logfile;
-        if (isset($_SERVER["QUERY_STRING"])) if (!file_exists($logfile)) if (file_put_contents($logfile, '') === false) {
+        //$this->logfile = $logfile;
+
+//??? WHAT IF LOGFILE == FALSE ???
+	if($logfile) {
+	    $this->logfile = '/var/www/generation/mytests/tests/' .$logfile;
+	    //echo "\n----------------\n". $this->logfile ."\n--------------\n";
+	} else {
+	    $this->logfile = $logfile;
+	}
+
+        if (isset($_SERVER["QUERY_STRING"])) if (!file_exists($this->logfile)) if (file_put_contents($this->logfile, '') === false) {
             die("error writing $logfile\n");
         }
     }

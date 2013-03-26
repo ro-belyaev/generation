@@ -27,7 +27,8 @@ function mq($q, $mand = false) {
     global $db_last;
     $db_last = $q;
     
-    $re = mysql_query($q);
+    //$re = mysql_query($q);
+    $re = mysql_query($q, $db_conn);
     if ($mand && ($re === false)) error_log("TESTERR in query '$q' : '" . mysql_error() . "'");
     return $re;
 }

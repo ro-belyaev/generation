@@ -54,7 +54,7 @@ $(function() {
                                 success: function(generationID) {
                                     console.log(generationID);
                                     console.log('hello');
-                                    var generationWindow = "http://localhost/generation/generation.html?id=" +
+                                    var generationWindow = "http://localhost/generation/mytests/generation.html?id=" +
                                         generationID;
                                     var target = "generationWindow";
                                     window.open(generationWindow, "_top", "", true);

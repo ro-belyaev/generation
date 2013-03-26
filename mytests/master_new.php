@@ -1,6 +1,6 @@
 <?php
 require_once "inc.php";
-//mysql_connect($db_host, $db_login, $db_pass);
+mysql_connect($db_host, $db_login, $db_pass);
 
 /*
 echo "Clearing old files..\n";
@@ -55,6 +55,7 @@ foreach ($confs as $conf) {
 			}
 			$query_update_process = "UPDATE $table SET `process`=$test_count WHERE `id`=$id";
 			mysql_query($query_update_process, $connection);
+			//sfasdfkjs;adflkjas;lf   laksfjdal          saf;l;
 		    }
                 }
             }
@@ -69,7 +70,7 @@ $cur_state = mysql_fetch_row($result)[0];
 if($cur_state == STATE_CANCEL) {
     die("generation cancel");
 }
-$query_update_process = "UPDATE $table SET `process`=$test_count WHERE `id`=$id";
+$query_update_process = "UPDATE $table SET `process`=$test_count, `state`=" .STATE_COMPLETE. " WHERE `id`=$id";
 mysql_query($query_update_process, $connection);
 
 //echo "Writing tests/list.php ..\n";
